@@ -1,0 +1,370 @@
+# 🚗 Full Source Code — Part 1: Data Classes
+
+## 1. User.java — Abstract Base Class
+```java
+// OOP: ABSTRACTION (abstract class), ENCAPSULATION (private fields)
+public abstract class User {
+    private String userId;
+    private String username;
+    private String name;
+    private String email;
+    private String password;
+    private String role;
+
+    public User(String userId, String username, String name, String email, String password, String role) {
+        this.userId = userId;
+        this.username = username;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    // Abstract method - subclasses MUST override this
+    public abstract String displayInfo();
+
+    // Getters
+    public String getUserId() { return userId; }
+    public String getUsername() { return username; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public String getPassword() { return password; }
+    public String getRole() { return role; }
+
+    // Setters
+    public void setUsername(String username) { this.username = username; }
+    public void setName(String name) { this.name = name; }
+    public void setEmail(String email) { this.email = email; }
+    public void setPassword(String password) { this.password = password; }
+}
+```
+
+---
+
+## 2. Admin.java — Inherits from User
+```java
+// OOP: INHERITANCE (extends User), POLYMORPHISM (overrides displayInfo), METHOD OVERRIDING
+public class Admin extends User {
+
+    public Admin(String userId, String username, String name, String email, String password) {
+        super(userId, username, name, email, password, "Admin"); // calls parent constructor
+    }
+
+    @Override
+    public String displayInfo() {
+        return "Admin: " + getName() + " (ID: " + getUserId() + ") | Email: " + getEmail();
+    }
+
+    public void addCar(Car car) {
+        DataStore.cars.add(car);
+    }
+
+    public void removeCar(String carId) {
+        for (int i = 0; i < DataStore.cars.size(); i++) {
+            if (DataStore.cars.get(i).getCarId().equals(carId)) {
+                DataStore.cars.remove(i);
+                break;
+            }
+        }
+    }
+}
+```
+
+---
+
+## 3. Customer.java — Inherits from User
+```java
+import java.util.ArrayList;
+
+// OOP: INHERITANCE, POLYMORPHISM (different displayInfo than Admin), ENCAPSULATION
+public class Customer extends User {
+    private ArrayList<Rental> rentalHistory;
+
+    public Customer(String userId, String username, String name, String email, String password) {
+        super(userId, username, name, email, password, "Customer");
+        this.rentalHistory = new ArrayList<>();
+    }
+
+    @Override
+    public String displayInfo() {
+        return "Customer: " + getName() + " (ID: " + getUserId() + ") | Rentals: " + rentalHistory.size();
+    }
+
+    public ArrayList<Rental> getRentalHistory() { return rentalHistory; }
+
+    public void addRental(Rental rental) { rentalHistory.add(rental); }
+}
+```
+
+---
+
+## 4. Car.java — Car Data Class
+```java
+// OOP: ENCAPSULATION (all private fields), CONSTRUCTOR, METHOD OVERRIDING (toString)
+public class Car {
+    private String carId;
+    private String brand;
+    private String model;
+    private int year;
+    private double pricePerDay;
+    private boolean available;
+    private String carType;
+
+    public Car(String carId, String brand, String model, int year,
+               double pricePerDay, boolean available, String carType) {
+        this.carId = carId;
+        this.brand = brand;
+        this.model = model;
+        this.year = year;
+        this.pricePerDay = pricePerDay;
+        this.available = available;
+        this.carType = carType;
+    }
+
+    // Getters
+    public String getCarId() { return carId; }
+    public String getBrand() { return brand; }
+    public String getModel() { return model; }
+    public int getYear() { return year; }
+    public double getPricePerDay() { return pricePerDay; }
+    public boolean isAvailable() { return available; }
+    public String getCarType() { return carType; }
+
+    // Setters
+    public void setCarId(String carId) { this.carId = carId; }
+    public void setBrand(String brand) { this.brand = brand; }
+    public void setModel(String model) { this.model = model; }
+    public void setYear(int year) { this.year = year; }
+    public void setPricePerDay(double pricePerDay) { this.pricePerDay = pricePerDay; }
+    public void setAvailable(boolean available) { this.available = available; }
+    public void setCarType(String carType) { this.carType = carType; }
+
+    public String getAvailabilityStatus() {
+        if (available) { return "Available"; } else { return "Rented"; }
+    }
+
+    @Override
+    public String toString() { return brand + " " + model + " (" + year + ")"; }
+}
+```
+
+---
+
+## 5. Rental.java — Rental Transaction
+```java
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
+// OOP: ASSOCIATION (has-a Customer, has-a Car), ENCAPSULATION
+public class Rental {
+    private String rentalId;
+    private Customer customer;
+    private Car car;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private int numberOfDays;
+    private double totalPrice;
+
+    public Rental(String rentalId, Customer customer, Car car,
+                  LocalDate startDate, LocalDate endDate) {
+        this.rentalId = rentalId;
+        this.customer = customer;
+        this.car = car;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.numberOfDays = calculateDays();
+        this.totalPrice = calculateTotalPrice();
+    }
+
+    private int calculateDays() { return (int) ChronoUnit.DAYS.between(startDate, endDate); }
+
+    public double calculateTotalPrice() { return numberOfDays * car.getPricePerDay(); }
+
+    // Getters
+    public String getRentalId() { return rentalId; }
+    public Customer getCustomer() { return customer; }
+    public Car getCar() { return car; }
+    public LocalDate getStartDate() { return startDate; }
+    public LocalDate getEndDate() { return endDate; }
+    public int getNumberOfDays() { return numberOfDays; }
+    public double getTotalPrice() { return totalPrice; }
+
+    // Helper getters for TableView
+    public String getCustomerName() { return customer.getName(); }
+    public String getCarInfo() { return car.toString(); }
+    public String getStartDateString() { return startDate.toString(); }
+    public String getEndDateString() { return endDate.toString(); }
+    public String getTotalPriceFormatted() { return String.format("$%.2f", totalPrice); }
+}
+```
+
+---
+
+## 6. Payment.java — Simulated Payment
+```java
+// OOP: ENCAPSULATION, METHODS
+public class Payment {
+    private String paymentId;
+    private double amount;
+    private String paymentMethod;
+    private boolean successful;
+
+    public Payment(String paymentId, double amount, String paymentMethod) {
+        this.paymentId = paymentId;
+        this.amount = amount;
+        this.paymentMethod = paymentMethod;
+        this.successful = false;
+    }
+
+    // Simulates payment - always succeeds
+    public boolean processPayment() { this.successful = true; return true; }
+
+    public String getPaymentId() { return paymentId; }
+    public double getAmount() { return amount; }
+    public String getPaymentMethod() { return paymentMethod; }
+    public boolean isSuccessful() { return successful; }
+}
+```
+
+---
+
+## 7. Invoice.java — Invoice Generation
+```java
+// OOP: ASSOCIATION (has-a Rental, has-a Payment)
+public class Invoice {
+    private String invoiceId;
+    private Rental rental;
+    private Payment payment;
+
+    public Invoice(String invoiceId, Rental rental, Payment payment) {
+        this.invoiceId = invoiceId;
+        this.rental = rental;
+        this.payment = payment;
+    }
+
+    public String generateInvoiceText() {
+        String text = "";
+        text += "==========================================\n";
+        text += "              INVOICE                     \n";
+        text += "==========================================\n";
+        text += "Invoice #:      " + invoiceId + "\n";
+        text += "------------------------------------------\n";
+        text += "Customer:       " + rental.getCustomerName() + "\n";
+        text += "Car:            " + rental.getCarInfo() + "\n";
+        text += "Car ID:         " + rental.getCar().getCarId() + "\n";
+        text += "------------------------------------------\n";
+        text += "Start Date:     " + rental.getStartDate() + "\n";
+        text += "End Date:       " + rental.getEndDate() + "\n";
+        text += "Number of Days: " + rental.getNumberOfDays() + "\n";
+        text += "Price Per Day:  $" + String.format("%.2f", rental.getCar().getPricePerDay()) + "\n";
+        text += "------------------------------------------\n";
+        text += "TOTAL PRICE:    $" + String.format("%.2f", rental.getTotalPrice()) + "\n";
+        text += "Payment Method: " + payment.getPaymentMethod() + "\n";
+        text += "Payment Status: " + (payment.isSuccessful() ? "PAID" : "PENDING") + "\n";
+        text += "==========================================\n";
+        return text;
+    }
+
+    // Getters
+    public String getInvoiceId() { return invoiceId; }
+    public Rental getRental() { return rental; }
+    public Payment getPayment() { return payment; }
+
+    // Helper getters for TableView
+    public String getCustomerName() { return rental.getCustomerName(); }
+    public String getCarInfo() { return rental.getCarInfo(); }
+    public String getTotalPriceFormatted() { return String.format("$%.2f", rental.getTotalPrice()); }
+    public String getPaymentMethod() { return payment.getPaymentMethod(); }
+    public String getPaymentStatus() { return payment.isSuccessful() ? "Paid" : "Pending"; }
+    public String getDatesInfo() { return rental.getStartDate() + " to " + rental.getEndDate(); }
+}
+```
+
+---
+
+## 8. DataStore.java — In-Memory Database
+```java
+import java.util.ArrayList;
+
+// Static ArrayLists act as our "database"
+public class DataStore {
+    public static ArrayList<Car> cars = new ArrayList<>();
+    public static ArrayList<User> users = new ArrayList<>();
+    public static ArrayList<Rental> rentals = new ArrayList<>();
+    public static ArrayList<Invoice> invoices = new ArrayList<>();
+
+    private static int carIdCounter = 11;
+    private static int rentalIdCounter = 1;
+    private static int invoiceIdCounter = 1;
+    private static int paymentIdCounter = 1;
+
+    public static String generateCarId() {
+        String id = "C" + String.format("%03d", carIdCounter); carIdCounter++; return id;
+    }
+    public static String generateRentalId() {
+        String id = "R" + String.format("%03d", rentalIdCounter); rentalIdCounter++; return id;
+    }
+    public static String generateInvoiceId() {
+        String id = "INV" + String.format("%03d", invoiceIdCounter); invoiceIdCounter++; return id;
+    }
+    public static String generatePaymentId() {
+        String id = "PAY" + String.format("%03d", paymentIdCounter); paymentIdCounter++; return id;
+    }
+
+    public static void loadSampleData() {
+        // Admins
+        users.add(new Admin("U001", "admin1", "Ahmed Hassan", "ahmed@email.com", "admin123"));
+        users.add(new Admin("U002", "admin2", "Sara Ali", "sara@email.com", "admin456"));
+        // Customers
+        users.add(new Customer("U003", "customer1", "Farid Elsayed", "farid@email.com", "cust123"));
+        users.add(new Customer("U004", "customer2", "Nour Mohamed", "nour@email.com", "cust456"));
+        users.add(new Customer("U005", "customer3", "Omar Khaled", "omar@email.com", "cust789"));
+        // Cars
+        cars.add(new Car("C001", "Toyota", "Camry", 2023, 50.0, true, "Sedan"));
+        cars.add(new Car("C002", "BMW", "X5", 2024, 120.0, true, "SUV"));
+        cars.add(new Car("C003", "Honda", "Civic", 2022, 40.0, true, "Sedan"));
+        cars.add(new Car("C004", "Mercedes", "C-Class", 2024, 100.0, true, "Luxury"));
+        cars.add(new Car("C005", "Ford", "Mustang", 2023, 90.0, true, "Sports"));
+        cars.add(new Car("C006", "Toyota", "RAV4", 2023, 65.0, true, "SUV"));
+        cars.add(new Car("C007", "Hyundai", "Elantra", 2022, 35.0, true, "Economy"));
+        cars.add(new Car("C008", "Kia", "Sportage", 2024, 55.0, true, "SUV"));
+        cars.add(new Car("C009", "Nissan", "Altima", 2023, 45.0, true, "Sedan"));
+        cars.add(new Car("C010", "Chevrolet", "Tahoe", 2024, 110.0, true, "SUV"));
+    }
+
+    public static User findUser(String username, String password) {
+        for (int i = 0; i < users.size(); i++) {
+            User user = users.get(i);
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public static Car findCarById(String carId) {
+        for (int i = 0; i < cars.size(); i++) {
+            if (cars.get(i).getCarId().equals(carId)) { return cars.get(i); }
+        }
+        return null;
+    }
+
+    public static ArrayList<Car> getAvailableCars() {
+        ArrayList<Car> available = new ArrayList<>();
+        for (int i = 0; i < cars.size(); i++) {
+            if (cars.get(i).isAvailable()) { available.add(cars.get(i)); }
+        }
+        return available;
+    }
+
+    public static ArrayList<Customer> getAllCustomers() {
+        ArrayList<Customer> customers = new ArrayList<>();
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i) instanceof Customer) {
+                customers.add((Customer) users.get(i));
+            }
+        }
+        return customers;
+    }
+}
+```

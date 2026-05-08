@@ -1,0 +1,313 @@
+# 🚗 Full Source Code — Part 2: GUI Screens
+
+## 9. Main.java
+```java
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+    public static Stage primaryStage;
+
+    @Override
+    public void start(Stage stage) {
+        primaryStage = stage;
+        primaryStage.setTitle("Car Rental Management System");
+        DataStore.loadSampleData();
+        LoginScreen loginScreen = new LoginScreen();
+        primaryStage.setScene(loginScreen.getScene());
+        primaryStage.setResizable(true);
+        primaryStage.setWidth(1100);
+        primaryStage.setHeight(750);
+        primaryStage.show();
+    }
+
+    public static void switchScene(Scene scene) { primaryStage.setScene(scene); }
+
+    public static void main(String[] args) { launch(args); }
+}
+```
+
+---
+
+## 10. LoginScreen.java
+```java
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
+public class LoginScreen {
+    private Scene scene;
+
+    public LoginScreen() {
+        Label titleLabel = new Label("\uD83D\uDE97 Car Rental Management System");
+        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        titleLabel.setStyle("-fx-text-fill: #2196F3;");
+
+        Label subtitleLabel = new Label("Please log in to continue");
+        subtitleLabel.setFont(Font.font("Arial", 14));
+        subtitleLabel.setStyle("-fx-text-fill: #666666;");
+
+        Label usernameLabel = new Label("Username:");
+        usernameLabel.setFont(Font.font("Arial", 14));
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Enter your username");
+        usernameField.setPrefWidth(280);
+        usernameField.setStyle("-fx-font-size: 14px; -fx-padding: 8px;");
+
+        Label passwordLabel = new Label("Password:");
+        passwordLabel.setFont(Font.font("Arial", 14));
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Enter your password");
+        passwordField.setPrefWidth(280);
+        passwordField.setStyle("-fx-font-size: 14px; -fx-padding: 8px;");
+
+        Button loginButton = new Button("Login");
+        loginButton.setPrefWidth(280);
+        loginButton.setPrefHeight(40);
+        loginButton.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        loginButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 5px;");
+
+        Label statusLabel = new Label("");
+        statusLabel.setStyle("-fx-text-fill: red;");
+
+        Label infoLabel = new Label("Sample Logins:");
+        infoLabel.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+        infoLabel.setStyle("-fx-text-fill: #999;");
+        Label adminInfo = new Label("Admin: admin1 / admin123");
+        adminInfo.setStyle("-fx-text-fill: #999; -fx-font-size: 11px;");
+        Label customerInfo = new Label("Customer: customer1 / cust123");
+        customerInfo.setStyle("-fx-text-fill: #999; -fx-font-size: 11px;");
+
+        loginButton.setOnAction(e -> {
+            String username = usernameField.getText().trim();
+            String password = passwordField.getText().trim();
+            if (username.isEmpty() || password.isEmpty()) {
+                statusLabel.setText("Please enter both username and password!");
+                return;
+            }
+            User user = DataStore.findUser(username, password);
+            if (user == null) {
+                statusLabel.setText("Invalid username or password!");
+            } else if (user instanceof Admin) {
+                Main.switchScene(new AdminDashboard((Admin) user).getScene());
+            } else if (user instanceof Customer) {
+                Main.switchScene(new CustomerDashboard((Customer) user).getScene());
+            }
+        });
+        passwordField.setOnAction(e -> loginButton.fire());
+
+        VBox formBox = new VBox(12);
+        formBox.setAlignment(Pos.CENTER);
+        formBox.getChildren().addAll(usernameLabel, usernameField, passwordLabel, passwordField, loginButton, statusLabel);
+
+        VBox infoBox = new VBox(5);
+        infoBox.setAlignment(Pos.CENTER);
+        infoBox.getChildren().addAll(infoLabel, adminInfo, customerInfo);
+
+        VBox root = new VBox(20);
+        root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(50));
+        root.setStyle("-fx-background-color: #f5f5f5;");
+        root.getChildren().addAll(titleLabel, subtitleLabel, formBox, new Separator(), infoBox);
+        scene = new Scene(root, 1100, 750);
+    }
+
+    public Scene getScene() { return scene; }
+}
+```
+
+---
+
+## 11. AdminDashboard.java
+> [!NOTE]
+> Full file at: [AdminDashboard.java](file:///Users/faridelsayed/Desktop/Care%20Rental%20Mangment%203/src/AdminDashboard.java)
+
+```java
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import java.util.ArrayList;
+
+public class AdminDashboard {
+    private Scene scene;
+    private Admin currentAdmin;
+    private BorderPane mainLayout;
+    private TableView<Car> carTable;
+    private ObservableList<Car> carData;
+
+    public AdminDashboard(Admin admin) {
+        this.currentAdmin = admin;
+        HBox topBar = createTopBar();
+        HBox navBar = createNavBar();
+        VBox topSection = new VBox(0);
+        topSection.getChildren().addAll(topBar, navBar);
+        mainLayout = new BorderPane();
+        mainLayout.setTop(topSection);
+        mainLayout.setStyle("-fx-background-color: #f5f5f5;");
+        showCarsView();
+        scene = new Scene(mainLayout, 1100, 750);
+    }
+
+    private HBox createTopBar() {
+        Label titleLabel = new Label("\uD83D\uDD27 Admin Dashboard");
+        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 22));
+        titleLabel.setStyle("-fx-text-fill: white;");
+        Label welcomeLabel = new Label("Welcome, " + currentAdmin.getName());
+        welcomeLabel.setStyle("-fx-text-fill: #E3F2FD; -fx-font-size: 14px;");
+        VBox titleBox = new VBox(2);
+        titleBox.getChildren().addAll(titleLabel, welcomeLabel);
+        Button logoutButton = new Button("Logout");
+        logoutButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 13px; -fx-cursor: hand; -fx-background-radius: 5px; -fx-padding: 8 16;");
+        logoutButton.setOnAction(e -> Main.switchScene(new LoginScreen().getScene()));
+        HBox topBar = new HBox();
+        topBar.setAlignment(Pos.CENTER_LEFT);
+        topBar.setPadding(new Insets(15, 25, 15, 25));
+        topBar.setStyle("-fx-background-color: #1565C0;");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        topBar.getChildren().addAll(titleBox, spacer, logoutButton);
+        return topBar;
+    }
+
+    private HBox createNavBar() {
+        Button carsBtn = new Button("\uD83D\uDE97 Manage Cars");
+        Button rentalsBtn = new Button("\uD83D\uDCCB All Rentals");
+        Button customersBtn = new Button("\uD83D\uDC65 Customers");
+        String s = "-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 10 20; -fx-background-radius: 0;";
+        carsBtn.setStyle(s); rentalsBtn.setStyle(s); customersBtn.setStyle(s);
+        carsBtn.setOnAction(e -> showCarsView());
+        rentalsBtn.setOnAction(e -> showRentalsView());
+        customersBtn.setOnAction(e -> showCustomersView());
+        HBox navBar = new HBox(0);
+        navBar.setStyle("-fx-background-color: #1976D2;");
+        navBar.getChildren().addAll(carsBtn, rentalsBtn, customersBtn);
+        return navBar;
+    }
+
+    private void showCarsView() {
+        VBox carsView = new VBox(15);
+        carsView.setPadding(new Insets(20));
+        Label sectionTitle = new Label("Car Inventory");
+        sectionTitle.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+
+        Button addBtn = new Button("➕ Add Car");
+        Button editBtn = new Button("✏️ Edit Car");
+        Button deleteBtn = new Button("\uD83D\uDDD1️ Delete Car");
+        addBtn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 16; -fx-background-radius: 5px;");
+        editBtn.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 16; -fx-background-radius: 5px;");
+        deleteBtn.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 16; -fx-background-radius: 5px;");
+        HBox buttonBar = new HBox(10);
+        buttonBar.getChildren().addAll(addBtn, editBtn, deleteBtn);
+
+        carTable = new TableView<>();
+        carData = FXCollections.observableArrayList(DataStore.cars);
+        carTable.setItems(carData);
+
+        TableColumn<Car, String> idCol = new TableColumn<>("Car ID");
+        idCol.setCellValueFactory(new PropertyValueFactory<>("carId")); idCol.setPrefWidth(80);
+        TableColumn<Car, String> brandCol = new TableColumn<>("Brand");
+        brandCol.setCellValueFactory(new PropertyValueFactory<>("brand")); brandCol.setPrefWidth(120);
+        TableColumn<Car, String> modelCol = new TableColumn<>("Model");
+        modelCol.setCellValueFactory(new PropertyValueFactory<>("model")); modelCol.setPrefWidth(120);
+        TableColumn<Car, Integer> yearCol = new TableColumn<>("Year");
+        yearCol.setCellValueFactory(new PropertyValueFactory<>("year")); yearCol.setPrefWidth(80);
+        TableColumn<Car, Double> priceCol = new TableColumn<>("Price/Day ($)");
+        priceCol.setCellValueFactory(new PropertyValueFactory<>("pricePerDay")); priceCol.setPrefWidth(110);
+        TableColumn<Car, String> typeCol = new TableColumn<>("Type");
+        typeCol.setCellValueFactory(new PropertyValueFactory<>("carType")); typeCol.setPrefWidth(100);
+        TableColumn<Car, String> statusCol = new TableColumn<>("Status");
+        statusCol.setCellValueFactory(new PropertyValueFactory<>("availabilityStatus")); statusCol.setPrefWidth(100);
+        carTable.getColumns().addAll(idCol, brandCol, modelCol, yearCol, priceCol, typeCol, statusCol);
+        VBox.setVgrow(carTable, Priority.ALWAYS);
+
+        addBtn.setOnAction(e -> Main.switchScene(new AddCarForm(null).getScene()));
+        editBtn.setOnAction(e -> {
+            Car sel = carTable.getSelectionModel().getSelectedItem();
+            if (sel == null) { showAlert("No Selection", "Please select a car to edit."); return; }
+            Main.switchScene(new AddCarForm(sel).getScene());
+        });
+        deleteBtn.setOnAction(e -> {
+            Car sel = carTable.getSelectionModel().getSelectedItem();
+            if (sel == null) { showAlert("No Selection", "Please select a car to delete."); return; }
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Confirm Delete");
+            confirm.setHeaderText("Delete " + sel.toString() + "?");
+            confirm.setContentText("This action cannot be undone.");
+            if (confirm.showAndWait().get() == ButtonType.OK) {
+                currentAdmin.removeCar(sel.getCarId());
+                refreshCarTable();
+            }
+        });
+        carsView.getChildren().addAll(sectionTitle, buttonBar, carTable);
+        mainLayout.setCenter(carsView);
+    }
+
+    private void showRentalsView() {
+        VBox v = new VBox(15); v.setPadding(new Insets(20));
+        Label t = new Label("All Rentals"); t.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        TableView<Rental> table = new TableView<>();
+        table.setItems(FXCollections.observableArrayList(DataStore.rentals));
+        TableColumn<Rental, String> c1 = new TableColumn<>("Rental ID"); c1.setCellValueFactory(new PropertyValueFactory<>("rentalId")); c1.setPrefWidth(100);
+        TableColumn<Rental, String> c2 = new TableColumn<>("Customer"); c2.setCellValueFactory(new PropertyValueFactory<>("customerName")); c2.setPrefWidth(150);
+        TableColumn<Rental, String> c3 = new TableColumn<>("Car"); c3.setCellValueFactory(new PropertyValueFactory<>("carInfo")); c3.setPrefWidth(180);
+        TableColumn<Rental, String> c4 = new TableColumn<>("Start"); c4.setCellValueFactory(new PropertyValueFactory<>("startDateString")); c4.setPrefWidth(120);
+        TableColumn<Rental, String> c5 = new TableColumn<>("End"); c5.setCellValueFactory(new PropertyValueFactory<>("endDateString")); c5.setPrefWidth(120);
+        TableColumn<Rental, Integer> c6 = new TableColumn<>("Days"); c6.setCellValueFactory(new PropertyValueFactory<>("numberOfDays")); c6.setPrefWidth(70);
+        TableColumn<Rental, String> c7 = new TableColumn<>("Total"); c7.setCellValueFactory(new PropertyValueFactory<>("totalPriceFormatted")); c7.setPrefWidth(100);
+        table.getColumns().addAll(c1, c2, c3, c4, c5, c6, c7);
+        VBox.setVgrow(table, Priority.ALWAYS);
+        if (DataStore.rentals.isEmpty()) table.setPlaceholder(new Label("No rentals yet."));
+        v.getChildren().addAll(t, table);
+        mainLayout.setCenter(v);
+    }
+
+    private void showCustomersView() {
+        VBox v = new VBox(15); v.setPadding(new Insets(20));
+        Label t = new Label("Registered Customers"); t.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        TableView<Customer> table = new TableView<>();
+        table.setItems(FXCollections.observableArrayList(DataStore.getAllCustomers()));
+        TableColumn<Customer, String> c1 = new TableColumn<>("User ID"); c1.setCellValueFactory(new PropertyValueFactory<>("userId")); c1.setPrefWidth(100);
+        TableColumn<Customer, String> c2 = new TableColumn<>("Name"); c2.setCellValueFactory(new PropertyValueFactory<>("name")); c2.setPrefWidth(180);
+        TableColumn<Customer, String> c3 = new TableColumn<>("Email"); c3.setCellValueFactory(new PropertyValueFactory<>("email")); c3.setPrefWidth(220);
+        TableColumn<Customer, String> c4 = new TableColumn<>("Username"); c4.setCellValueFactory(new PropertyValueFactory<>("username")); c4.setPrefWidth(150);
+        table.getColumns().addAll(c1, c2, c3, c4);
+        VBox.setVgrow(table, Priority.ALWAYS);
+        v.getChildren().addAll(t, table);
+        mainLayout.setCenter(v);
+    }
+
+    public void refreshCarTable() {
+        if (carTable != null) { carData = FXCollections.observableArrayList(DataStore.cars); carTable.setItems(carData); carTable.refresh(); }
+    }
+
+    private void showAlert(String title, String msg) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION); a.setTitle(title); a.setHeaderText(null); a.setContentText(msg); a.showAndWait();
+    }
+
+    public Scene getScene() { return scene; }
+}
+```
+
+---
+
+## 12–15: Remaining GUI Files
+
+> [!IMPORTANT]
+> The remaining files are already in your project. Click to open:
+> - [CustomerDashboard.java](file:///Users/faridelsayed/Desktop/Care%20Rental%20Mangment%203/src/CustomerDashboard.java) — Search, filter, book cars, rental history, invoices
+> - [AddCarForm.java](file:///Users/faridelsayed/Desktop/Care%20Rental%20Mangment%203/src/AddCarForm.java) — Add/Edit car form with validation
+> - [BookingForm.java](file:///Users/faridelsayed/Desktop/Care%20Rental%20Mangment%203/src/BookingForm.java) — Date pickers, auto price calc, payment
+> - [InvoiceScreen.java](file:///Users/faridelsayed/Desktop/Care%20Rental%20Mangment%203/src/InvoiceScreen.java) — Invoice display after booking
