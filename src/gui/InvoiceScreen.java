@@ -112,10 +112,33 @@ public class InvoiceScreen {
 
         printButton.setOnAction(e -> {
             javafx.print.PrinterJob job = javafx.print.PrinterJob.createPrinterJob();
-            if (job != null && job.showPrintDialog(scene.getWindow())) {
-                boolean success = job.printPage(invoiceBox);
-                if (success) {
-                    job.endJob();
+            if (job != null) {
+                // Printer exists, show native print dialog
+                if (job.showPrintDialog(scene.getWindow())) {
+                    boolean success = job.printPage(invoiceBox);
+                    if (success) {
+                        job.endJob();
+                    }
+                }
+            } else {
+                // No printer found on the computer, fallback to saving as a text file
+                javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+                fileChooser.setTitle("Save Invoice As Text");
+                fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("Text Files", "*.txt"));
+                fileChooser.setInitialFileName("Invoice_" + invoice.getInvoiceId() + ".txt");
+                java.io.File file = fileChooser.showSaveDialog(scene.getWindow());
+                
+                if (file != null) {
+                    try (java.io.PrintWriter writer = new java.io.PrintWriter(file)) {
+                        writer.println(invoice.generateInvoiceText());
+                        Alert a = new Alert(Alert.AlertType.INFORMATION);
+                        a.setTitle("Saved Successfully");
+                        a.setHeaderText("No Printer Detected");
+                        a.setContentText("Your invoice was saved as a text file instead.");
+                        a.showAndWait();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
         });
