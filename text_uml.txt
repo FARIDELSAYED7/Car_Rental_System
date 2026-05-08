@@ -1,0 +1,209 @@
+=========================================================
+CAR RENTAL SYSTEM - FULL TEXT UML SPECIFICATIONS
+=========================================================
+
+1. PACKAGE: models
+=========================================================
+
+---------------------------------------------------------
+Class: User (Abstract)
+---------------------------------------------------------
+Attributes:
+- userId : String (private)
+- username : String (private)
+- name : String (private)
+- email : String (private)
+- password : String (private)
+- role : String (private)
+
+Methods:
++ User(userId: String, username: String, name: String, email: String, password: String, role: String)
++ getUserId() : String
++ getUsername() : String
++ getName() : String
++ getEmail() : String
++ getPassword() : String
++ getRole() : String
++ displayInfo() : String (abstract)
+
+---------------------------------------------------------
+Class: Admin (Inherits from User)
+---------------------------------------------------------
+Attributes:
+(Inherits all attributes from User)
+
+Methods:
++ Admin(userId: String, username: String, name: String, email: String, password: String)
++ displayInfo() : String (Overrides User.displayInfo)
++ addCar(car: Car) : void
++ removeCar(carId: String) : void
+
+---------------------------------------------------------
+Class: Customer (Inherits from User)
+---------------------------------------------------------
+Attributes:
+- rentalHistory : ArrayList<Rental> (private)
+
+Methods:
++ Customer(userId: String, username: String, name: String, email: String, password: String)
++ displayInfo() : String (Overrides User.displayInfo)
++ getRentalHistory() : ArrayList<Rental>
++ addRental(rental: Rental) : void
+
+---------------------------------------------------------
+Class: Car
+---------------------------------------------------------
+Attributes:
+- carId : String (private)
+- brand : String (private)
+- model : String (private)
+- year : int (private)
+- pricePerDay : double (private)
+- available : boolean (private)
+- carType : String (private)
+
+Methods:
++ Car(carId: String, brand: String, model: String, year: int, price: double, available: boolean, type: String)
++ getCarId() : String
++ getBrand() : String
++ setBrand(brand: String) : void
++ getModel() : String
++ setModel(model: String) : void
++ getYear() : int
++ setYear(year: int) : void
++ getPricePerDay() : double
++ setPricePerDay(price: double) : void
++ isAvailable() : boolean
++ setAvailable(available: boolean) : void
++ getCarType() : String
++ setCarType(type: String) : void
++ getAvailabilityStatus() : String
++ toString() : String
+
+---------------------------------------------------------
+Class: Rental
+---------------------------------------------------------
+Attributes:
+- rentalId : String (private)
+- customer : Customer (private)
+- car : Car (private)
+- startDate : LocalDate (private)
+- endDate : LocalDate (private)
+- numberOfDays : int (private)
+- totalPrice : double (private)
+
+Methods:
++ Rental(rentalId: String, customer: Customer, car: Car, startDate: LocalDate, endDate: LocalDate)
+- calculateDays() : int (private)
++ calculateTotalPrice() : double
++ getRentalId() : String
++ getCustomer() : Customer
++ getCustomerName() : String
++ getCar() : Car
++ getCarInfo() : String
++ getStartDate() : LocalDate
++ getEndDate() : LocalDate
++ getNumberOfDays() : int
++ getTotalPrice() : double
++ getStartDateString() : String
++ getEndDateString() : String
++ getTotalPriceFormatted() : String
+
+---------------------------------------------------------
+Class: Payment
+---------------------------------------------------------
+Attributes:
+- paymentId : String (private)
+- amount : double (private)
+- paymentMethod : String (private)
+- successful : boolean (private)
+
+Methods:
++ Payment(paymentId: String, amount: double, paymentMethod: String)
++ processPayment() : boolean
++ getPaymentId() : String
++ getAmount() : double
++ getPaymentMethod() : String
++ isSuccessful() : boolean
+
+---------------------------------------------------------
+Class: Invoice
+---------------------------------------------------------
+Attributes:
+- invoiceId : String (private)
+- rental : Rental (private)
+- payment : Payment (private)
+
+Methods:
++ Invoice(invoiceId: String, rental: Rental, payment: Payment)
++ generateInvoiceText() : String
++ getInvoiceId() : String
++ getRental() : Rental
++ getPayment() : Payment
++ getCarInfo() : String
++ getDatesInfo() : String
++ getTotalPriceFormatted() : String
++ getPaymentMethod() : String
++ getPaymentStatus() : String
+
+
+2. PACKAGE: data
+=========================================================
+
+---------------------------------------------------------
+Class: DataStore
+---------------------------------------------------------
+Attributes:
++ cars : ArrayList<Car> (static)
++ users : ArrayList<User> (static)
++ rentals : ArrayList<Rental> (static)
++ invoices : ArrayList<Invoice> (static)
+- carIdCounter : int (static, private)
+- rentalIdCounter : int (static, private)
+- invoiceIdCounter : int (static, private)
+- paymentIdCounter : int (static, private)
+
+Methods:
++ loadSampleData() : void (static)
++ generateCarId() : String (static)
++ generateRentalId() : String (static)
++ generateInvoiceId() : String (static)
++ generatePaymentId() : String (static)
++ findUser(username: String, password: String) : User (static)
++ getAvailableCars() : ArrayList<Car> (static)
++ findCarById(carId: String) : Car (static)
+
+---------------------------------------------------------
+Class: DatabaseHelper
+---------------------------------------------------------
+Attributes:
+- URL : String (static, constant)
+- USER : String (static, constant)
+- PASSWORD : String (static, constant)
+
+Methods:
++ getConnection() : Connection (static)
++ loadAllUsers() : ArrayList<User> (static)
++ loadAllCars() : ArrayList<Car> (static)
++ insertCar(car: Car) : void (static)
++ updateCar(car: Car) : void (static)
++ deleteCar(carId: String) : void (static)
++ updateCarAvailability(carId: String, available: boolean) : void (static)
++ loadAllRentals() : ArrayList<Rental> (static)
++ insertRental(rental: Rental) : void (static)
++ loadAllInvoices() : ArrayList<Invoice> (static)
++ insertInvoice(invoice: Invoice) : void (static)
++ initializeDatabase() : void (static)
+- insertSampleData(conn: Connection) : void (static, private)
+
+
+3. RELATIONSHIPS SUMMARY
+=========================================================
+- Admin IS A User (Inheritance)
+- Customer IS A User (Inheritance)
+- Rental HAS A Customer (Association / Aggregation)
+- Rental HAS A Car (Association / Aggregation)
+- Invoice HAS A Rental (Association / Composition)
+- Invoice HAS A Payment (Association / Composition)
+- DataStore USES DatabaseHelper (Dependency)
+- All GUI Classes USE models and DataStore (Dependency)
