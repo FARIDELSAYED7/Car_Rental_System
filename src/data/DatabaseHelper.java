@@ -7,21 +7,29 @@ import java.util.ArrayList;
 
 /**
  * DatabaseHelper - Handles all MySQL database operations.
+ *
+ * شرح بالعربي (مبسّط):
+ * - الكلاس ده مسؤول عن أي عملية قراءة/إضافة/تعديل/حذف في قاعدة البيانات.
+ * - كل دالة هنا بتتعامل مع جدول معين (users, cars, rentals, invoices).
+ * - ده ليس جزء ذكاء اصطناعي؛ هو مجرد اتصال عادي بقاعدة البيانات.
  */
 public class DatabaseHelper {
 
     private static final String URL = "jdbc:mysql://localhost:3306/car_rental";
     private static final String USER = "root"; // Default username
     private static final String PASSWORD = "FARID2007@"; // Default empty password
+    // بالعربي: عدّل بيانات الاتصال حسب بيئتك المحلية.
 
     /**
      * Connect to the database
+     * بالعربي: بنرجّع اتصال جاهز بقاعدة البيانات.
      */
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
     // ================== USERS ==================
+    // بالعربي: التعامل مع جدول المستخدمين.
 
     public static ArrayList<User> loadAllUsers() {
         ArrayList<User> usersList = new ArrayList<>();
@@ -52,6 +60,7 @@ public class DatabaseHelper {
     }
 
     // ================== CARS ==================
+    // بالعربي: التعامل مع جدول السيارات.
 
     public static ArrayList<Car> loadAllCars() {
         ArrayList<Car> carsList = new ArrayList<>();
@@ -148,6 +157,7 @@ public class DatabaseHelper {
     }
 
     // ================== RENTALS & INVOICES ==================
+    // بالعربي: بيانات الحجز والفواتير.
 
     public static ArrayList<Rental> loadAllRentals() {
         ArrayList<Rental> rentalsList = new ArrayList<>();
@@ -165,6 +175,7 @@ public class DatabaseHelper {
                 LocalDate end = rs.getDate("end_date").toLocalDate();
 
                 // Find customer and car from DataStore lists (assuming they are loaded first)
+                // بالعربي: بنربط الحجز بالعميل والسيارة الموجودة في الذاكرة.
                 Customer customer = null;
                 for (User u : DataStore.users) {
                     if (u.getUserId().equals(customerId) && u instanceof Customer) {
@@ -179,6 +190,7 @@ public class DatabaseHelper {
                     Rental rental = new Rental(id, customer, car, start, end);
                     rentalsList.add(rental);
                     customer.addRental(rental); // add to customer history
+                    // بالعربي: نضيف الحجز لسجل العميل.
                 }
             }
         } catch (SQLException e) {
@@ -260,6 +272,7 @@ public class DatabaseHelper {
     }
     
     // ================== INIT DB ==================
+    // بالعربي: تجهيز قاعدة البيانات والجداول أول مرة.
     public static void initializeDatabase() {
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/", USER, PASSWORD);
              Statement stmt = conn.createStatement()) {

@@ -24,6 +24,10 @@ import java.util.ArrayList;
  * - Filter cars by price range
  * - Book a car
  * - View personal rental history
+ *
+ * شرح بالعربي:
+ * - دي لوحة تحكم العميل.
+ * - البحث والفلترة هنا منطق برمجي بسيط (مش AI).
  */
 public class CustomerDashboard {
 
@@ -34,14 +38,17 @@ public class CustomerDashboard {
 
     /**
      * Constructor - builds the customer dashboard UI
+     * بالعربي: تجهيز الشاشة الرئيسية للعميل.
      */
     public CustomerDashboard(Customer customer) {
         this.currentCustomer = customer;
 
-        // ===== Top Bar =====
+    // ===== Top Bar =====
+    // بالعربي: شريط علوي فيه العنوان وخروج.
         HBox topBar = createTopBar();
 
-        // ===== Navigation =====
+    // ===== Navigation =====
+    // بالعربي: أزرار التنقل بين الأقسام.
         HBox navBar = createNavBar();
 
         VBox topSection = new VBox(0);
@@ -51,7 +58,8 @@ public class CustomerDashboard {
         mainLayout.setTop(topSection);
         mainLayout.setStyle("-fx-background-color: #f5f5f5;");
 
-        // Show available cars by default
+    // Show available cars by default
+    // بالعربي: أول شاشة تعرض السيارات المتاحة.
         showAvailableCarsView();
 
         scene = new Scene(mainLayout, 1100, 750);
@@ -59,6 +67,7 @@ public class CustomerDashboard {
 
     /**
      * Create the top bar with welcome message and logout
+     * بالعربي: إنشاء الشريط العلوي.
      */
     private HBox createTopBar() {
         Label titleLabel = new Label("🚗 Customer Dashboard");
@@ -94,6 +103,7 @@ public class CustomerDashboard {
 
     /**
      * Create navigation bar
+     * بالعربي: إنشاء شريط التنقل.
      */
     private HBox createNavBar() {
         Button carsBtn = new Button("🚗 Available Cars");
@@ -118,6 +128,8 @@ public class CustomerDashboard {
 
     // ====================================================================
     // AVAILABLE CARS VIEW - Search, Filter, and Book cars
+    // بالعربي: عرض السيارات المتاحة + البحث والفلترة.
+    // ملاحظة: البحث والفلترة هنا IF/LOOP عادي، وليس ذكاء اصطناعي.
     // ====================================================================
     private void showAvailableCarsView() {
         VBox carsView = new VBox(12);
@@ -126,7 +138,8 @@ public class CustomerDashboard {
         Label sectionTitle = new Label("Available Cars");
         sectionTitle.setFont(Font.font("Arial", FontWeight.BOLD, 18));
 
-        // ----- Search Bar -----
+    // ----- Search Bar -----
+    // بالعربي: شريط البحث بالاسم أو الموديل.
         Label searchLabel = new Label("Search:");
         searchLabel.setFont(Font.font("Arial", 13));
         TextField searchField = new TextField();
@@ -146,7 +159,8 @@ public class CustomerDashboard {
         searchBar.setAlignment(Pos.CENTER_LEFT);
         searchBar.getChildren().addAll(searchLabel, searchField, typeLabel, typeCombo, searchBtn);
 
-        // ----- Price Filter -----
+    // ----- Price Filter -----
+    // بالعربي: فلترة حسب السعر.
         Label priceLabel = new Label("Price Range:");
         priceLabel.setFont(Font.font("Arial", 13));
         TextField minPrice = new TextField();
@@ -166,7 +180,8 @@ public class CustomerDashboard {
         filterBar.setAlignment(Pos.CENTER_LEFT);
         filterBar.getChildren().addAll(priceLabel, minPrice, new Label("-"), maxPrice, filterBtn, resetBtn);
 
-        // ----- Car Table -----
+    // ----- Car Table -----
+    // بالعربي: جدول عرض النتائج.
         carTable = new TableView<>();
         refreshAvailableCars(carTable);
 
@@ -197,7 +212,8 @@ public class CustomerDashboard {
         carTable.getColumns().addAll(idCol, brandCol, modelCol, yearCol, priceCol, typeCol);
         VBox.setVgrow(carTable, Priority.ALWAYS);
 
-        // ----- Book Button -----
+    // ----- Book Button -----
+    // بالعربي: زر الحجز.
         Button bookBtn = new Button("📅 Book Selected Car");
         bookBtn.setStyle(
             "-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; " +
@@ -209,9 +225,11 @@ public class CustomerDashboard {
         bookBar.setPadding(new Insets(5));
         bookBar.getChildren().add(bookBtn);
 
-        // ===== Event Handlers =====
+    // ===== Event Handlers =====
+    // بالعربي: منطق الأزرار.
 
-        // Search button
+    // Search button
+    // بالعربي: البحث المنطقي (بدون AI).
         searchBtn.setOnAction(e -> {
             String query = searchField.getText().trim().toLowerCase();
             String type = typeCombo.getValue();
@@ -237,7 +255,8 @@ public class CustomerDashboard {
             carTable.setItems(FXCollections.observableArrayList(results));
         });
 
-        // Filter by price
+    // Filter by price
+    // بالعربي: فلترة بالمدى السعري.
         filterBtn.setOnAction(e -> {
             try {
                 double min = minPrice.getText().isEmpty() ? 0 : Double.parseDouble(minPrice.getText());
@@ -256,7 +275,8 @@ public class CustomerDashboard {
             }
         });
 
-        // Reset filters
+    // Reset filters
+    // بالعربي: مسح الفلاتر والعودة لكل النتائج.
         resetBtn.setOnAction(e -> {
             searchField.clear();
             typeCombo.setValue("All");
@@ -265,7 +285,8 @@ public class CustomerDashboard {
             refreshAvailableCars(carTable);
         });
 
-        // Book button
+    // Book button
+    // بالعربي: فتح شاشة الحجز للسيارة المحددة.
         bookBtn.setOnAction(e -> {
             Car selectedCar = carTable.getSelectionModel().getSelectedItem();
             if (selectedCar == null) {
@@ -286,6 +307,7 @@ public class CustomerDashboard {
 
     // ====================================================================
     // RENTAL HISTORY VIEW - Show customer's past rentals
+    // بالعربي: عرض سجل الحجوزات السابقة.
     // ====================================================================
     private void showRentalHistoryView() {
         VBox historyView = new VBox(15);
@@ -335,6 +357,7 @@ public class CustomerDashboard {
 
     // ====================================================================
     // INVOICES VIEW - Show customer's invoices
+    // بالعربي: عرض الفواتير الخاصة بالعميل.
     // ====================================================================
     private void showInvoicesView() {
         VBox invoicesView = new VBox(15);
@@ -412,6 +435,7 @@ public class CustomerDashboard {
 
     /**
      * Refresh the available cars table
+     * بالعربي: تحديث جدول السيارات المتاحة.
      */
     private void refreshAvailableCars(TableView<Car> table) {
         ArrayList<Car> available = DataStore.getAvailableCars();
@@ -420,6 +444,7 @@ public class CustomerDashboard {
 
     /**
      * Show a simple alert dialog
+     * بالعربي: نافذة تنبيه بسيطة.
      */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

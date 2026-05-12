@@ -23,6 +23,10 @@ import java.util.ArrayList;
  * - Add, Edit, Delete cars
  * - View all rentals
  * - View all customers
+ *
+ * شرح بالعربي:
+ * - دي لوحة تحكم الأدمن.
+ * - الأدمن يقدر يدير السيارات ويشوف الحجوزات والعملاء.
  */
 public class AdminDashboard {
 
@@ -34,17 +38,21 @@ public class AdminDashboard {
 
     /**
      * Constructor - builds the admin dashboard UI
+     * بالعربي: بنبني كل عناصر شاشة الأدمن هنا.
      */
     public AdminDashboard(Admin admin) {
         this.currentAdmin = admin;
 
-        // ===== Top Bar =====
+    // ===== Top Bar =====
+    // بالعربي: شريط علوي فيه عنوان وترحيب وخروج.
         HBox topBar = createTopBar();
 
-        // ===== Navigation Buttons =====
+    // ===== Navigation Buttons =====
+    // بالعربي: أزرار التنقل بين الأقسام.
         HBox navBar = createNavBar();
 
-        // ===== Main content area (starts with car table) =====
+    // ===== Main content area (starts with car table) =====
+    // بالعربي: المنطقة الرئيسية وتبدأ بعرض السيارات.
         VBox topSection = new VBox(0);
         topSection.getChildren().addAll(topBar, navBar);
 
@@ -60,6 +68,7 @@ public class AdminDashboard {
 
     /**
      * Create the top bar with title and logout button
+     * بالعربي: إنشاء الشريط العلوي.
      */
     private HBox createTopBar() {
         Label titleLabel = new Label("🔧 Admin Dashboard");
@@ -96,6 +105,7 @@ public class AdminDashboard {
 
     /**
      * Create navigation bar with section buttons
+     * بالعربي: إنشاء شريط التنقل للأقسام المختلفة.
      */
     private HBox createNavBar() {
         Button carsBtn = new Button("🚗 Manage Cars");
@@ -122,6 +132,7 @@ public class AdminDashboard {
 
     // ====================================================================
     // CARS VIEW - Show all cars with Add, Edit, Delete buttons
+    // بالعربي: عرض جدول السيارات والتحكم فيها.
     // ====================================================================
     private void showCarsView() {
         VBox carsView = new VBox(15);
@@ -130,7 +141,8 @@ public class AdminDashboard {
         Label sectionTitle = new Label("Car Inventory");
         sectionTitle.setFont(Font.font("Arial", FontWeight.BOLD, 18));
 
-        // Action buttons
+    // Action buttons
+    // بالعربي: أزرار إضافة/تعديل/حذف.
         Button addBtn = new Button("➕ Add Car");
         Button editBtn = new Button("✏️ Edit Car");
         Button deleteBtn = new Button("🗑️ Delete Car");
@@ -142,12 +154,14 @@ public class AdminDashboard {
         HBox buttonBar = new HBox(10);
         buttonBar.getChildren().addAll(addBtn, editBtn, deleteBtn);
 
-        // Create the car table
+    // Create the car table
+    // بالعربي: جدول عرض بيانات السيارات.
         carTable = new TableView<>();
         carData = FXCollections.observableArrayList(DataStore.cars);
         carTable.setItems(carData);
 
-        // Define table columns
+    // Define table columns
+    // بالعربي: تعريف أعمدة الجدول.
         TableColumn<Car, String> idCol = new TableColumn<>("Car ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("carId"));
         idCol.setPrefWidth(80);
@@ -179,15 +193,18 @@ public class AdminDashboard {
         carTable.getColumns().addAll(idCol, brandCol, modelCol, yearCol, priceCol, typeCol, statusCol);
         VBox.setVgrow(carTable, Priority.ALWAYS);
 
-        // ===== Button Event Handlers =====
+    // ===== Button Event Handlers =====
+    // بالعربي: منطق الأزرار.
 
-        // Add Car button
+    // Add Car button
+    // بالعربي: فتح شاشة إضافة سيارة.
         addBtn.setOnAction(e -> {
             AddCarForm addForm = new AddCarForm(null); // null = adding new car
             Main.switchScene(addForm.getScene());
         });
 
-        // Edit Car button
+    // Edit Car button
+    // بالعربي: تعديل السيارة المختارة.
         editBtn.setOnAction(e -> {
             Car selectedCar = carTable.getSelectionModel().getSelectedItem();
             if (selectedCar == null) {
@@ -198,7 +215,8 @@ public class AdminDashboard {
             Main.switchScene(editForm.getScene());
         });
 
-        // Delete Car button
+    // Delete Car button
+    // بالعربي: حذف السيارة المختارة بعد تأكيد.
         deleteBtn.setOnAction(e -> {
             Car selectedCar = carTable.getSelectionModel().getSelectedItem();
             if (selectedCar == null) {
@@ -224,6 +242,7 @@ public class AdminDashboard {
 
     // ====================================================================
     // RENTALS VIEW - Show all rentals in a table
+    // بالعربي: عرض كل الحجوزات التي تمت.
     // ====================================================================
     private void showRentalsView() {
         VBox rentalsView = new VBox(15);
@@ -267,7 +286,8 @@ public class AdminDashboard {
         rentalTable.getColumns().addAll(ridCol, custCol, carCol, startCol, endCol, daysCol, totalCol);
         VBox.setVgrow(rentalTable, Priority.ALWAYS);
 
-        // Show message if no rentals yet
+    // Show message if no rentals yet
+    // بالعربي: رسالة لو مفيش حجوزات.
         if (DataStore.rentals.isEmpty()) {
             rentalTable.setPlaceholder(new Label("No rentals yet."));
         }
@@ -278,6 +298,7 @@ public class AdminDashboard {
 
     // ====================================================================
     // CUSTOMERS VIEW - Show all customers
+    // بالعربي: عرض كل العملاء المسجلين.
     // ====================================================================
     private void showCustomersView() {
         VBox customersView = new VBox(15);
@@ -316,6 +337,7 @@ public class AdminDashboard {
 
     /**
      * Refresh the car table after add/edit/delete
+     * بالعربي: تحديث جدول السيارات بعد أي تغيير.
      */
     public void refreshCarTable() {
         if (carTable != null) {
@@ -327,6 +349,7 @@ public class AdminDashboard {
 
     /**
      * Show a simple alert dialog
+     * بالعربي: نافذة تنبيه بسيطة.
      */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

@@ -7,10 +7,16 @@ package models;
  * - ABSTRACTION: This class is abstract (you cannot create a User object directly)
  * - ENCAPSULATION: All fields are private, accessed through getters/setters
  * - CONSTRUCTORS: Used to initialize user data when creating objects
+ *
+ * شرح بالعربي (مبسّط):
+ * - ده أساس كل المستخدمين في النظام.
+ * - مينفعش نعمل منه Object مباشر، لازم نعمل Admin أو Customer.
+ * - البيانات private علشان نحميها ونوصلها من خلال getters/setters.
  */
 public abstract class User {
 
     // Private fields - ENCAPSULATION (data hiding)
+    // بالعربي: المتغيرات خاصة ومقفولة علشان الأمان.
     private String userId;
     private String username;
     private String name;
@@ -19,6 +25,7 @@ public abstract class User {
     private String role;
 
     // Constructor - initializes all fields when a User is created
+    // بالعربي: الـ constructor بيملأ كل بيانات المستخدم أول ما يتعمل.
     public User(String userId, String username, String name, String email, String password, String role) {
         this.userId = userId;
         this.username = username;
@@ -32,6 +39,8 @@ public abstract class User {
      * Abstract method - ABSTRACTION
      * Every subclass (Admin, Customer) MUST provide its own version of this method.
      * This is what makes polymorphism possible.
+     *
+     * بالعربي: أي كلاس ابن لازم يكتب نسخته الخاصة من displayInfo().
      */
     public abstract String displayInfo();
 

@@ -17,6 +17,10 @@ import javafx.scene.text.FontWeight;
  *
  * Users enter their username and password to log in.
  * Based on credentials, they are sent to Admin or Customer dashboard.
+ *
+ * شرح بالعربي:
+ * - دي أول شاشة بتظهر للمستخدم.
+ * - لو البيانات صح، بنوجّه المستخدم حسب دوره (Admin أو Customer).
  */
 public class LoginScreen {
 
@@ -24,9 +28,11 @@ public class LoginScreen {
 
     /**
      * Constructor - builds the entire login screen UI
+     * بالعربي: بنبني كل عناصر الواجهة هنا (Labels, Fields, Buttons).
      */
     public LoginScreen() {
-        // ===== Create UI Components =====
+    // ===== Create UI Components =====
+    // بالعربي: هنا بنعمل كل عناصر الواجهة.
 
         // Title label
         Label titleLabel = new Label("🚗 Car Rental Management System");
@@ -64,7 +70,8 @@ public class LoginScreen {
             "-fx-cursor: hand; -fx-background-radius: 5px;"
         );
 
-        // Status label (shows error messages)
+    // Status label (shows error messages)
+    // بالعربي: مكان الرسائل لما يحصل خطأ.
         Label statusLabel = new Label("");
         statusLabel.setFont(Font.font("Arial", 12));
         statusLabel.setStyle("-fx-text-fill: red;");
@@ -80,7 +87,8 @@ public class LoginScreen {
         Label customerInfo = new Label("Customer: customer1 / cust123");
         customerInfo.setStyle("-fx-text-fill: #999999; -fx-font-size: 11px;");
 
-        // ===== EVENT HANDLING =====
+    // ===== EVENT HANDLING =====
+    // بالعربي: التعامل مع أحداث المستخدم.
 
         // What happens when the Login button is clicked
         loginButton.setOnAction(e -> {
@@ -88,32 +96,39 @@ public class LoginScreen {
             String password = passwordField.getText().trim();
 
             // Check if fields are empty
+            // بالعربي: تحقق إن الحقول مش فاضية.
             if (username.isEmpty() || password.isEmpty()) {
                 statusLabel.setText("Please enter both username and password!");
                 return;
             }
 
             // Try to find the user in our DataStore
+            // بالعربي: نبحث في البيانات عن المستخدم.
             User user = DataStore.findUser(username, password);
 
             if (user == null) {
                 // User not found - show error
+                // بالعربي: بيانات غير صحيحة.
                 statusLabel.setText("Invalid username or password!");
             } else if (user instanceof Admin) {
                 // User is an Admin - go to Admin Dashboard
+                // بالعربي: لو أدمن نفتح لوحة الأدمن.
                 AdminDashboard adminDashboard = new AdminDashboard((Admin) user);
                 Main.switchScene(adminDashboard.getScene());
             } else if (user instanceof Customer) {
                 // User is a Customer - go to Customer Dashboard
+                // بالعربي: لو عميل نفتح لوحة العميل.
                 CustomerDashboard customerDashboard = new CustomerDashboard((Customer) user);
                 Main.switchScene(customerDashboard.getScene());
             }
         });
 
-        // Allow pressing Enter to login
+    // Allow pressing Enter to login
+    // بالعربي: لو المستخدم ضغط Enter ندخله.
         passwordField.setOnAction(e -> loginButton.fire());
 
-        // ===== Layout =====
+    // ===== Layout =====
+    // بالعربي: ترتيب عناصر الواجهة داخل الحاويات.
         VBox formBox = new VBox(12);
         formBox.setAlignment(Pos.CENTER);
         formBox.getChildren().addAll(
@@ -131,7 +146,8 @@ public class LoginScreen {
         infoBox.setAlignment(Pos.CENTER);
         infoBox.getChildren().addAll(infoLabel, adminInfo, customerInfo);
 
-        // Main container
+    // Main container
+    // بالعربي: الحاوية الرئيسية للشاشة.
         VBox root = new VBox(20);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(50));
@@ -144,6 +160,7 @@ public class LoginScreen {
 
     /**
      * Returns the scene to be displayed
+     * بالعربي: بنرجّع الـ Scene علشان يتم عرضها.
      */
     public Scene getScene() {
         return scene;

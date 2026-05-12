@@ -12,6 +12,10 @@ import java.time.temporal.ChronoUnit;
  * OOP Concepts:
  * - ENCAPSULATION: Private fields with getters
  * - ASSOCIATION: Rental HAS-A Customer and HAS-A Car
+ *
+ * شرح بالعربي:
+ * - ده الكلاس اللي يمثّل عملية الحجز نفسها.
+ * - بيربط العميل بالسيارة والتواريخ ويحسب السعر تلقائيًا.
  */
 public class Rental {
 
@@ -25,6 +29,7 @@ public class Rental {
 
     /**
      * Constructor - creates a rental and automatically calculates days and price
+     * بالعربي: بمجرد ما نعمل الحجز، نحسب عدد الأيام والسعر.
      */
     public Rental(String rentalId, Customer customer, Car car,
                   LocalDate startDate, LocalDate endDate) {
@@ -39,6 +44,7 @@ public class Rental {
 
     /**
      * Calculate the number of days between start and end date
+     * بالعربي: حساب الفرق بين تاريخ البداية والنهاية بالأيام.
      */
     private int calculateDays() {
         return (int) ChronoUnit.DAYS.between(startDate, endDate);
@@ -46,6 +52,7 @@ public class Rental {
 
     /**
      * Calculate total rental price = number of days × price per day
+     * بالعربي: السعر الكلي = عدد الأيام × سعر اليوم.
      */
     public double calculateTotalPrice() {
         return numberOfDays * car.getPricePerDay();
@@ -81,6 +88,7 @@ public class Rental {
     }
 
     // ===== Helper getters for TableView display =====
+    // بالعربي: دوال مساعدة لعرض البيانات بشكل مرتب في الجداول.
     public String getCustomerName() {
         return customer.getName();
     }

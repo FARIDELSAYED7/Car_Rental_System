@@ -16,6 +16,11 @@ import javafx.scene.text.FontWeight;
  *
  * If a Car object is passed to the constructor, the form fills in the car's data (Edit mode).
  * If null is passed, the form is empty (Add mode).
+ *
+ * شرح بالعربي:
+ * - نفس الشاشة تستخدم للإضافة والتعديل.
+ * - لو دخلناها بـ Car موجودة -> تعديل.
+ * - لو دخلناها بـ null -> إضافة جديدة.
  */
 public class AddCarForm {
 
@@ -25,17 +30,20 @@ public class AddCarForm {
     /**
      * Constructor - builds the add/edit car form
      * @param car - null for new car, or existing car to edit
+     * بالعربي: هنا بنبني كل عناصر الفورم.
      */
     public AddCarForm(Car car) {
         this.existingCar = car;
         boolean isEditing = (car != null);
 
-        // ===== Title =====
+    // ===== Title =====
+    // بالعربي: العنوان يتغير حسب وضع الإضافة أو التعديل.
         Label titleLabel = new Label(isEditing ? "✏️ Edit Car" : "➕ Add New Car");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 22));
         titleLabel.setStyle("-fx-text-fill: #1565C0;");
 
-        // ===== Form Fields =====
+    // ===== Form Fields =====
+    // بالعربي: خانات الإدخال الخاصة بالسيارة.
         Label brandLabel = new Label("Brand:");
         brandLabel.setFont(Font.font("Arial", 14));
         TextField brandField = new TextField();
@@ -72,7 +80,8 @@ public class AddCarForm {
         typeCombo.setPrefWidth(300);
         typeCombo.setStyle("-fx-font-size: 14px;");
 
-        // If editing, fill in existing data
+    // If editing, fill in existing data
+    // بالعربي: لو تعديل، نملأ الحقول بالبيانات القديمة.
         if (isEditing) {
             brandField.setText(car.getBrand());
             modelField.setText(car.getModel());
@@ -81,7 +90,8 @@ public class AddCarForm {
             typeCombo.setValue(car.getCarType());
         }
 
-        // ===== Buttons =====
+    // ===== Buttons =====
+    // بالعربي: أزرار الحفظ والإلغاء.
         Button saveButton = new Button(isEditing ? "Save Changes" : "Add Car");
         saveButton.setPrefWidth(140);
         saveButton.setPrefHeight(40);
@@ -98,15 +108,18 @@ public class AddCarForm {
             "-fx-font-size: 14px; -fx-cursor: hand; -fx-background-radius: 5px;"
         );
 
-        // Status label for validation errors
+    // Status label for validation errors
+    // بالعربي: يظهر رسائل الأخطاء للمستخدم.
         Label statusLabel = new Label("");
         statusLabel.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 
-        // ===== Event Handlers =====
+    // ===== Event Handlers =====
+    // بالعربي: منطق الضغط على الأزرار.
 
         // Save button
         saveButton.setOnAction(e -> {
             // Validate inputs
+            // بالعربي: التحقق من المدخلات.
             String brand = brandField.getText().trim();
             String model = modelField.getText().trim();
             String yearText = yearField.getText().trim();
@@ -119,6 +132,7 @@ public class AddCarForm {
             }
 
             // Validate year
+            // بالعربي: السنة لازم تكون رقم وفي نطاق منطقي.
             int year;
             try {
                 year = Integer.parseInt(yearText);
@@ -132,6 +146,7 @@ public class AddCarForm {
             }
 
             // Validate price
+            // بالعربي: السعر لازم يكون رقم أكبر من صفر.
             double price;
             try {
                 price = Double.parseDouble(priceText);
@@ -146,6 +161,7 @@ public class AddCarForm {
 
             if (isEditing) {
                 // Update existing car
+                // بالعربي: تعديل السيارة الموجودة.
                 existingCar.setBrand(brand);
                 existingCar.setModel(model);
                 existingCar.setYear(year);
@@ -157,6 +173,7 @@ public class AddCarForm {
                 showSuccessAlert("Car Updated", "Car details updated successfully!");
             } else {
                 // Create new car
+                // بالعربي: إنشاء سيارة جديدة وإضافتها.
                 String carId = DataStore.generateCarId();
                 Car newCar = new Car(carId, brand, model, year, price, true, type);
                 DataStore.cars.add(newCar);
@@ -167,13 +184,16 @@ public class AddCarForm {
             }
 
             // Go back to admin dashboard (find current admin from DataStore)
+            // بالعربي: نرجع للوحة الأدمن.
             goBackToAdmin();
         });
 
-        // Cancel button
+    // Cancel button
+    // بالعربي: إلغاء بدون حفظ.
         cancelButton.setOnAction(e -> goBackToAdmin());
 
-        // ===== Layout =====
+    // ===== Layout =====
+    // بالعربي: ترتيب العناصر على الشاشة.
         GridPane formGrid = new GridPane();
         formGrid.setHgap(15);
         formGrid.setVgap(12);
@@ -205,6 +225,7 @@ public class AddCarForm {
 
     /**
      * Navigate back to Admin Dashboard
+     * بالعربي: العودة للوحة الأدمن.
      */
     private void goBackToAdmin() {
         // Find the first admin in DataStore (simplest approach)
@@ -220,6 +241,7 @@ public class AddCarForm {
 
     /**
      * Show a success alert
+     * بالعربي: رسالة نجاح للمستخدم.
      */
     private void showSuccessAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

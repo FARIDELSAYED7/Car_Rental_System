@@ -9,12 +9,17 @@ import data.*;
  * - INHERITANCE: Admin extends (inherits from) User
  * - POLYMORPHISM: displayInfo() is overridden to behave differently than Customer
  * - METHOD OVERRIDING: We provide a new version of the abstract displayInfo() method
+ *
+ * شرح بالعربي:
+ * - الأدمن هو المسؤول عن إدارة السيارات.
+ * - يقدر يضيف ويحذف ويعدل البيانات.
  */
 public class Admin extends User {
 
     /**
      * Constructor - uses super() to call the parent (User) constructor
      * The role is automatically set to "Admin"
+     * بالعربي: بنستدعي الـ constructor بتاع User ونحدد الدور Admin.
      */
     public Admin(String userId, String username, String name, String email, String password) {
         // super() calls the User constructor - INHERITANCE in action
@@ -25,6 +30,7 @@ public class Admin extends User {
      * METHOD OVERRIDING - This method was abstract in User,
      * so we MUST provide an implementation here.
      * This version is specific to Admin users.
+     * بالعربي: نسخة مخصصة للأدمن من displayInfo().
      */
     @Override
     public String displayInfo() {
@@ -33,6 +39,7 @@ public class Admin extends User {
 
     /**
      * Admin-specific method: Add a new car to the system
+     * بالعربي: دالة خاصة بالأدمن لإضافة سيارة.
      */
     public void addCar(Car car) {
         DataStore.cars.add(car);
@@ -41,6 +48,7 @@ public class Admin extends User {
 
     /**
      * Admin-specific method: Remove a car from the system by its ID
+     * بالعربي: حذف سيارة باستخدام الـ ID.
      */
     public void removeCar(String carId) {
         // Loop through cars and remove the one with matching ID

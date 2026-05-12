@@ -9,6 +9,10 @@ package models;
  * OOP Concepts:
  * - ASSOCIATION: Invoice HAS-A Rental and HAS-A Payment
  * - ENCAPSULATION: Private fields with getters
+ *
+ * شرح بالعربي:
+ * - الفاتورة بتجمع تفاصيل الحجز والدفع.
+ * - الهدف منها عرض المعلومات بشكل مرتب للمستخدم.
  */
 public class Invoice {
 
@@ -18,6 +22,7 @@ public class Invoice {
 
     /**
      * Constructor - creates an invoice linking a rental to its payment
+     * بالعربي: ربط الفاتورة بالحجز والدفع المرتبطين بها.
      */
     public Invoice(String invoiceId, Rental rental, Payment payment) {
         this.invoiceId = invoiceId;
@@ -28,6 +33,7 @@ public class Invoice {
     /**
      * Generate a formatted invoice text for display
      * This creates a nice readable invoice string
+     * بالعربي: إنشاء نص منسّق للفاتورة لسهولة طباعته أو حفظه.
      */
     public String generateInvoiceText() {
         String text = "";
@@ -66,6 +72,7 @@ public class Invoice {
     }
 
     // ===== Helper getters for TableView display =====
+    // بالعربي: دوال مساعدة للعرض داخل الجداول.
     public String getCustomerName() {
         return rental.getCustomerName();
     }

@@ -7,10 +7,15 @@ package models;
  * - ENCAPSULATION: All fields are private with getters and setters
  * - CONSTRUCTORS: Constructor initializes all car data
  * - METHOD OVERRIDING: toString() is overridden for easy display
+ *
+ * شرح بالعربي:
+ * - ده كلاس بيحمل بيانات السيارة.
+ * - فيه كل المعلومات اللي المستخدم بيشوفها في الواجهة.
  */
 public class Car {
 
     // Private fields - ENCAPSULATION
+    // بالعربي: كل خصائص السيارة محفوظة بشكل خاص.
     private String carId;
     private String brand;
     private String model;
@@ -21,6 +26,7 @@ public class Car {
 
     /**
      * Constructor - creates a new Car with all required information
+     * بالعربي: بنملأ كل بيانات السيارة عند الإنشاء.
      */
     public Car(String carId, String brand, String model, int year,
                double pricePerDay, boolean available, String carType) {
@@ -94,6 +100,7 @@ public class Car {
     /**
      * Helper method to display availability as text
      * Used in the TableView to show "Available" or "Rented"
+     * بالعربي: بنرجّع حالة السيارة بشكل مقروء للواجهة.
      */
     public String getAvailabilityStatus() {
         if (available) {
@@ -106,6 +113,7 @@ public class Car {
     /**
      * METHOD OVERRIDING - Override toString() from Object class
      * This gives a nice text representation of the car
+     * بالعربي: بنرجّع وصف مختصر للسيارة.
      */
     @Override
     public String toString() {

@@ -9,6 +9,10 @@ package models;
  * OOP Concepts:
  * - ENCAPSULATION: Private fields with getters
  * - METHODS: processPayment() simulates payment logic
+ *
+ * شرح بالعربي:
+ * - الدفع هنا مجرد محاكاة (Simulation) بدون بوابة دفع حقيقية.
+ * - بنسجّل طريقة الدفع ونعلّم العملية إنها ناجحة.
  */
 public class Payment {
 
@@ -19,6 +23,7 @@ public class Payment {
 
     /**
      * Constructor - creates a payment (not yet processed)
+     * بالعربي: بننشئ عملية الدفع ولسه ما اتنفّذتش.
      */
     public Payment(String paymentId, double amount, String paymentMethod) {
         this.paymentId = paymentId;
@@ -31,6 +36,8 @@ public class Payment {
      * Simulate processing a payment
      * In a real system, this would connect to a payment gateway
      * For our project, it always succeeds
+     *
+     * بالعربي: هنا بنفترض إن الدفع ناجح دائمًا.
      */
     public boolean processPayment() {
         // Simulate successful payment

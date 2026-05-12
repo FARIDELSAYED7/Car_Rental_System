@@ -16,6 +16,10 @@ import javafx.scene.text.FontWeight;
  *
  * Shows all rental details, payment info, and total cost in a
  * formatted invoice layout.
+ *
+ * شرح بالعربي:
+ * - الشاشة دي بتعرض الفاتورة بعد الحجز.
+ * - فيها كل البيانات المهمة بشكل مرتب.
  */
 public class InvoiceScreen {
 
@@ -23,10 +27,12 @@ public class InvoiceScreen {
 
     /**
      * Constructor - builds the invoice display screen
+     * بالعربي: تجهيز واجهة الفاتورة بالكامل.
      */
     public InvoiceScreen(Invoice invoice, Customer customer) {
 
-        // ===== Header =====
+    // ===== Header =====
+    // بالعربي: عنوان الفاتورة ورسالة النجاح.
         Label headerLabel = new Label("🧾 INVOICE");
         headerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         headerLabel.setStyle("-fx-text-fill: #1565C0;");
@@ -35,11 +41,13 @@ public class InvoiceScreen {
         successLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         successLabel.setStyle("-fx-text-fill: #4CAF50;");
 
-        // ===== Invoice Details =====
+    // ===== Invoice Details =====
+    // بالعربي: تفاصيل الحجز والدفع.
         Rental rental = invoice.getRental();
         Payment payment = invoice.getPayment();
 
-        // Create formatted labels for each invoice line
+    // Create formatted labels for each invoice line
+    // بالعربي: سطور الفاتورة بشكل منسق.
         VBox invoiceBox = new VBox(8);
         invoiceBox.setPadding(new Insets(25));
         invoiceBox.setStyle(
@@ -88,7 +96,8 @@ public class InvoiceScreen {
             totalLabel, methodLabel, statusLabel
         );
 
-        // ===== Buttons =====
+    // ===== Buttons =====
+    // بالعربي: أزرار الرجوع والطباعة.
         Button backButton = new Button("🏠 Back to Dashboard");
         backButton.setPrefWidth(200);
         backButton.setPrefHeight(40);
@@ -160,6 +169,7 @@ public class InvoiceScreen {
     /**
      * Helper method to create a formatted detail label
      * Shows label and value side by side
+     * بالعربي: دالة مساعدة لعرض السطر بشكل مرتب.
      */
     private Label createDetailLabel(String labelText, String value) {
         Label label = new Label(labelText + "  " + value);

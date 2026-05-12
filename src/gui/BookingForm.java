@@ -17,6 +17,10 @@ import java.time.LocalDate;
  *
  * Shows car details, lets customer pick dates and payment method,
  * then creates a Rental, Payment, and Invoice.
+ *
+ * شرح بالعربي:
+ * - هنا العميل يحدد تواريخ الحجز وطريقة الدفع.
+ * - بعدها يتم إنشاء الحجز والدفع والفاتورة.
  */
 public class BookingForm {
 
@@ -26,17 +30,20 @@ public class BookingForm {
 
     /**
      * Constructor - builds the booking form
+     * بالعربي: تجهيز عناصر شاشة الحجز.
      */
     public BookingForm(Customer customer, Car car) {
         this.currentCustomer = customer;
         this.selectedCar = car;
 
-        // ===== Title =====
+    // ===== Title =====
+    // بالعربي: عنوان الشاشة.
         Label titleLabel = new Label("📅 Book a Car");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 22));
         titleLabel.setStyle("-fx-text-fill: #2E7D32;");
 
-        // ===== Car Info Section =====
+    // ===== Car Info Section =====
+    // بالعربي: عرض معلومات السيارة المختارة.
         Label carInfoTitle = new Label("Selected Car:");
         carInfoTitle.setFont(Font.font("Arial", FontWeight.BOLD, 16));
 
@@ -48,7 +55,8 @@ public class BookingForm {
         carDetails.setFont(Font.font("Arial", 14));
         carDetails.setStyle("-fx-background-color: #E8F5E9; -fx-padding: 15; -fx-background-radius: 8;");
 
-        // ===== Date Pickers =====
+    // ===== Date Pickers =====
+    // بالعربي: اختيار تاريخ البداية والنهاية.
         Label startLabel = new Label("Start Date:");
         startLabel.setFont(Font.font("Arial", 14));
         DatePicker startDatePicker = new DatePicker();
@@ -61,7 +69,8 @@ public class BookingForm {
         endDatePicker.setPromptText("Select end date");
         endDatePicker.setPrefWidth(250);
 
-        // ===== Calculated Fields =====
+    // ===== Calculated Fields =====
+    // بالعربي: عرض عدد الأيام والسعر الكلي.
         Label daysLabel = new Label("Number of Days: -");
         daysLabel.setFont(Font.font("Arial", 14));
 
@@ -69,7 +78,8 @@ public class BookingForm {
         totalLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
         totalLabel.setStyle("-fx-text-fill: #2E7D32;");
 
-        // ===== Payment Method =====
+    // ===== Payment Method =====
+    // بالعربي: اختيار طريقة الدفع.
         Label paymentLabel = new Label("Payment Method:");
         paymentLabel.setFont(Font.font("Arial", 14));
         ComboBox<String> paymentCombo = new ComboBox<>();
@@ -77,7 +87,8 @@ public class BookingForm {
         paymentCombo.setValue("Credit Card");
         paymentCombo.setPrefWidth(250);
 
-        // ===== Buttons =====
+    // ===== Buttons =====
+    // بالعربي: أزرار التأكيد والإلغاء.
         Button confirmButton = new Button("✅ Confirm Booking");
         confirmButton.setPrefWidth(200);
         confirmButton.setPrefHeight(45);
@@ -97,7 +108,8 @@ public class BookingForm {
         Label statusLabel = new Label("");
         statusLabel.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
 
-        // ===== Auto-calculate when dates change =====
+    // ===== Auto-calculate when dates change =====
+    // بالعربي: تحديث الحساب تلقائيًا عند تغيير التواريخ.
 
         // When start date changes
         startDatePicker.setOnAction(e -> {
@@ -109,9 +121,11 @@ public class BookingForm {
             updateCalculation(startDatePicker, endDatePicker, daysLabel, totalLabel);
         });
 
-        // ===== Confirm Booking =====
+    // ===== Confirm Booking =====
+    // بالعربي: منطق تأكيد الحجز.
         confirmButton.setOnAction(e -> {
             // Validate dates
+            // بالعربي: التحقق من صحة التواريخ.
             LocalDate startDate = startDatePicker.getValue();
             LocalDate endDate = endDatePicker.getValue();
 
@@ -131,43 +145,52 @@ public class BookingForm {
             }
 
             // Create Rental
+            // بالعربي: إنشاء حجز جديد.
             String rentalId = DataStore.generateRentalId();
             Rental rental = new Rental(rentalId, currentCustomer, selectedCar, startDate, endDate);
 
             // Create Payment
+            // بالعربي: إنشاء عملية دفع (محاكاة).
             String paymentId = DataStore.generatePaymentId();
             Payment payment = new Payment(paymentId, rental.getTotalPrice(), paymentCombo.getValue());
             payment.processPayment(); // Simulate payment
 
             // Create Invoice
+            // بالعربي: إنشاء فاتورة.
             String invoiceId = DataStore.generateInvoiceId();
             Invoice invoice = new Invoice(invoiceId, rental, payment);
 
             // Save everything to DataStore
+            // بالعربي: حفظ البيانات في الذاكرة.
             DataStore.rentals.add(rental);
             DataStore.invoices.add(invoice);
             currentCustomer.addRental(rental);
 
             // Mark car as rented (not available)
+            // بالعربي: تحديث حالة السيارة.
             selectedCar.setAvailable(false);
             
             // Save to database
+            // بالعربي: حفظ البيانات في قاعدة البيانات.
             DatabaseHelper.insertRental(rental);
             DatabaseHelper.insertInvoice(invoice);
             DatabaseHelper.updateCarAvailability(selectedCar.getCarId(), false);
 
             // Show the invoice screen
+            // بالعربي: عرض شاشة الفاتورة.
             InvoiceScreen invoiceScreen = new InvoiceScreen(invoice, currentCustomer);
             Main.switchScene(invoiceScreen.getScene());
         });
 
-        // Cancel button
+    // Cancel button
+    // بالعربي: العودة بدون إكمال الحجز.
         cancelButton.setOnAction(e -> {
             CustomerDashboard dashboard = new CustomerDashboard(currentCustomer);
             Main.switchScene(dashboard.getScene());
         });
 
-        // ===== Layout =====
+    // ===== Layout =====
+    // بالعربي: ترتيب عناصر الشاشة.
         GridPane dateGrid = new GridPane();
         dateGrid.setHgap(15);
         dateGrid.setVgap(12);
@@ -200,6 +223,7 @@ public class BookingForm {
 
     /**
      * Update the days and total price calculation when dates change
+     * بالعربي: حساب الأيام والسعر عند تغيير التاريخ.
      */
     private void updateCalculation(DatePicker start, DatePicker end, Label daysLabel, Label totalLabel) {
         if (start.getValue() != null && end.getValue() != null) {
