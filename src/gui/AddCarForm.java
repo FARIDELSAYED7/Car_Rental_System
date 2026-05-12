@@ -14,9 +14,8 @@ import javafx.scene.text.FontWeight;
 /**
  * AddCarForm - Form screen for adding a new car or editing an existing car
  *
- * If a Car object is passed to the constructor, the form fills in the car's data (Edit mode).
- * If null is passed, the form is empty (Add mode).
- *
+ passed, the form is empty (Add mode).
+ *kd sakdjisanjidjsadbnsajbid
  * شرح بالعربي:
  * - نفس الشاشة تستخدم للإضافة والتعديل.
  * - لو دخلناها بـ Car موجودة -> تعديل.
